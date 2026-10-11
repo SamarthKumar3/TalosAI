@@ -1,0 +1,23 @@
+.why-menu { position: relative; }
+.why-popover { position: absolute; bottom: calc(100% + 10px); left: 0; z-index: 20; width: min(310px, 82vw); padding: 8px; overflow: hidden; color: var(--color-ink); background: var(--color-surface-strong); border: 1px solid var(--color-line-strong); border-radius: var(--radius-medium); backdrop-filter: blur(var(--glass-blur)); }
+.why-popover > strong { display: block; padding: 7px 10px 5px; color: var(--color-ink-faint); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+.why-popover button { display: grid; gap: 3px; width: 100%; min-height: 56px; padding: 10px; color: var(--color-ink); text-align: left; background: transparent; border: 1px solid transparent; border-radius: var(--radius-small); }
+.why-popover button:hover:not(:disabled), .why-popover button:focus-visible { background: var(--color-accent-soft); border-color: var(--color-accent-glow); }
+.why-popover button strong { font-size: .88rem; }
+.why-popover span, .why-popover p { color: var(--color-ink-soft); font-size: .76rem; }
+.why-chip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px; border: 1px solid var(--color-line); border-radius: 12px; }
+.why-chip select { min-width: 0; max-width: 100%; flex: 1; min-height: 44px; background: transparent; color: inherit; }
+.why-chip button { min-width: 44px; min-height: 44px; }
+.why-chip svg { width: 18px; height: 18px; }
+.why-report { margin: 16px auto; padding: 20px; width: min(100% - 32px, 860px); border: 1px solid var(--color-line); border-radius: 16px; overflow-wrap: anywhere; background: var(--surface, Canvas); color: var(--color-ink); }
+.why-report details { margin-block: 12px; }
+.why-report summary { cursor: pointer; min-height: 44px; align-content: center; }
+.why-report dl > div { display: grid; grid-template-columns: minmax(100px, 1fr) minmax(0, 3fr); gap: 12px; padding-block: 4px; }
+.why-report dd { margin: 0; }
+.why-report pre { white-space: pre-wrap; font-size: .85rem; }
+.why-report a { display: inline-block; min-height: 44px; align-content: center; }
+.why-report :focus-visible, .why-menu :focus-visible, .why-chip :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.message[id] { scroll-margin-top: 90px; }
+
+.why-chip select, .why-chip button { border: 1px solid var(--color-line); border-radius: var(--radius-small); padding: 6px 10px; color: var(--color-ink); background: var(--color-surface); }
+.why-report a { color: var(--color-accent); }

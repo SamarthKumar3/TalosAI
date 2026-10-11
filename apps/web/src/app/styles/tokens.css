@@ -1,0 +1,76 @@
+/* Talos visual system: theme values live here; components consume semantic tokens. */
+:root {
+  --color-canvas: #f4f5ef;
+  --color-canvas-deep: #e9eee5;
+  --color-surface: rgb(255 255 255 / 62%);
+  --color-surface-strong: rgb(255 255 255 / 84%);
+  --color-surface-solid: #ffffff;
+  --color-surface-muted: rgb(239 242 255 / 74%);
+  --color-ink: #15182a;
+  --color-ink-soft: #555d75;
+  --color-ink-faint: #778097;
+  --color-on-accent: #ffffff;
+  --color-line: rgb(63 72 115 / 15%);
+  --color-line-strong: rgb(63 72 115 / 25%);
+  --color-highlight: rgb(255 255 255 / 82%);
+  --color-accent: #29634a;
+  --color-accent-strong: #204e3a;
+  --color-accent-soft: rgb(41 99 74 / 10%);
+  --color-accent-glow: rgb(41 99 74 / 20%);
+  --color-cyan: #437f72;
+  --color-cyan-soft: rgb(67 127 114 / 12%);
+  --color-violet: #c8baa1;
+  --color-violet-soft: rgb(200 186 161 / 12%);
+  --color-rose-soft: rgb(160 110 90 / 8%);
+  --color-danger: #b63f58;
+  --color-scrim: rgb(15 18 38 / 40%);
+  --color-code: #171a2e;
+  --gradient-canvas: var(--color-canvas);
+  --gradient-accent: var(--color-accent);
+  --gradient-brand: var(--color-accent);
+  --gradient-shimmer: linear-gradient(105deg, transparent 20%, var(--color-highlight) 46%, transparent 72%);
+  --glass-blur: 14px;
+  --glass-saturate: 115%;
+  --shadow-small: 0 8px 24px rgb(15 25 20 / 9%);
+  --shadow-medium: 0 18px 50px rgb(15 25 20 / 13%);
+  --shadow-large: 0 28px 90px rgb(15 25 20 / 20%);
+  --shadow-inset: inset 0 1px 0 var(--color-highlight);
+  --shadow-focus: 0 0 0 4px var(--color-accent-soft);
+  --shadow-accent: 0 12px 28px var(--color-accent-glow);
+  --radius-small: 10px;
+  --radius-medium: 14px;
+  --radius-large: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+  --duration-fast: 150ms;
+  --duration-medium: 240ms;
+  --duration-slow: 520ms;
+  --scrollbar-size: 6px;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --canvas: var(--color-canvas);
+  --surface: var(--color-surface-strong);
+  --surface-muted: var(--color-surface-muted);
+  --surface-raised: var(--color-surface);
+  --ink: var(--color-ink);
+  --ink-muted: var(--color-ink-soft);
+  --line: var(--color-line);
+  --line-strong: var(--color-line-strong);
+  --accent: var(--color-accent);
+  --accent-strong: var(--color-accent-strong);
+  --accent-soft: var(--color-accent-soft);
+  --danger: var(--color-danger);
+  --focus: var(--color-accent);
+  --shadow-panel: var(--shadow-large);
+}
+
+
+html, body { background: var(--color-canvas); }
+body { isolation: isolate; color: var(--color-ink); }
+body::before {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none; content: "";
+  background: radial-gradient(ellipse at 8% 12%, var(--color-accent-soft), transparent 48%), radial-gradient(ellipse at 92% 86%, var(--color-accent-soft), transparent 44%);
+}
+::selection { color: var(--color-on-accent); background: var(--color-accent); }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.skip-link { color: var(--color-on-accent); background: var(--color-accent); border-radius: var(--radius-small); }

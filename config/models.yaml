@@ -1,0 +1,24 @@
+schema_version: 1
+aliases:
+  default_chat:
+    provider: ${TALOS_DEFAULT_PROVIDER}
+    model_id: ${TALOS_CHAT_MODEL}
+    streaming: true
+    capabilities: [text, tools]
+    max_output_tokens: ${TALOS_MODEL_MAX_OUTPUT_TOKENS}
+    context_window_tokens: ${TALOS_MODEL_CONTEXT_WINDOW_TOKENS}
+    context_safety_margin_tokens: ${TALOS_CONTEXT_SAFETY_MARGIN_TOKENS}
+    cost_rates_per_million_tokens:
+      currency: USD
+      input: 0.15
+      output: 0.60
+      version: openrouter-2026-09-14
+      observed_on: "2026-09-14"
+  embedding_default:
+    provider: ${TALOS_DEFAULT_PROVIDER}
+    model_id: ${TALOS_EMBEDDING_MODEL}
+    enabled_from_phase: 6
+  rerank_default:
+    provider: ${TALOS_DEFAULT_PROVIDER}
+    model_id: ${TALOS_RERANK_MODEL}
+    enabled_from_phase: 8

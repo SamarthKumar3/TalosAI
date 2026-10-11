@@ -1,0 +1,6 @@
+schema_version: 1
+prompts:
+  default_system:
+    version: 1
+    path: config/prompts/default-system.md
+    variables: []

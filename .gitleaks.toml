@@ -1,0 +1,10 @@
+title = "TalosAI secret scanning"
+
+[extend]
+useDefault = true
+[[rules]]
+id = "talos-openrouter-api-key"
+description = "Talos/OpenRouter API key assignment"
+regex = '''(?i)OPENROUTER_API_KEY\s*=\s*["']?(sk-[A-Za-z0-9_-]{16,})'''
+secretGroup = 1
+keywords = ["OPENROUTER_API_KEY"]

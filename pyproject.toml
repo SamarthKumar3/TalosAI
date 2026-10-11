@@ -1,0 +1,91 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "talos-runtime"
+version = "0.1.0"
+description = "Developer-first AI agent runtime and Python SDK"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Samarth Kumar" }]
+maintainers = [{ name = "Samarth Kumar" }]
+keywords = ["ai", "agent", "llm", "rag", "sdk"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+
+dependencies = [
+  "httpx>=0.27,<1",
+  "pydantic>=2.10,<3",
+  "python-dotenv>=1.0,<2",
+  "PyYAML>=6.0,<7",
+]
+
+[project.urls]
+Source = "https://github.com/SamarthKumar3/TalosAI"
+Issues = "https://github.com/SamarthKumar3/TalosAI/issues"
+
+[project.scripts]
+hi = "talos.cli.entrypoints:hi_main"
+talos = "talos.cli.entrypoints:talos_main"
+
+[project.optional-dependencies]
+cli = ["keyring>=25,<26", "prompt-toolkit>=3.0.48,<4", "rich>=13.9,<15"]
+pdf = ["pypdf>=6.19,<7"]
+graph = ["langgraph>=1.0,<2"]
+service = [
+  "langgraph>=1.0,<2",
+  "pypdf>=6.19,<7",
+  "cryptography==50.0.2",
+  "alembic>=1.14,<2",
+  "asyncpg>=0.30,<1",
+  "fastapi>=0.115,<1",
+  "greenlet>=3.1,<4",
+  "redis>=5.2,<7",
+  "SQLAlchemy>=2.0.36,<3",
+  "uvicorn>=0.34,<1",
+]
+telemetry = [
+  "opentelemetry-api>=1.45,<2",
+  "opentelemetry-sdk>=1.45,<2",
+  "opentelemetry-exporter-otlp-proto-grpc>=1.45,<2",
+]
+dev = [
+  "mypy>=1.13,<2",
+  "ruff>=0.9,<1",
+  "types-PyYAML>=6.0.12,<7",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["packages/talos/src/talos"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"config" = "talos/templates/config"
+"skills" = "talos/templates/skills"
+".env.example" = "talos/templates/.env.example"
+"talos.example.yaml" = "talos/templates/talos.example.yaml"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/packages/talos/src/talos/**/*.py", "/config/**", "/skills/concise-explainer.md",
+  "/.env.example", "/talos.example.yaml", "/README.md", "/LICENSE", "/NOTICE", "/pyproject.toml",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["talos"]
+mypy_path = "packages/talos/src"

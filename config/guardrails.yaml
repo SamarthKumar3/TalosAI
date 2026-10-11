@@ -1,0 +1,61 @@
+schema_version: 1
+default_block_message: ${TALOS_GUARDRAIL_BLOCK_MESSAGE}
+max_custom_items: ${TALOS_GUARDRAIL_MAX_CUSTOM_ITEMS}
+max_custom_item_characters: ${TALOS_GUARDRAIL_MAX_CUSTOM_ITEM_CHARACTERS}
+
+# These rules are mandatory. Runtime settings may add rules, never replace or disable them.
+rules:
+  secrets:
+    label: Secrets and PII
+    detail: detected secrets in the input
+    patterns:
+      - id: api_key_assignment
+        expression: '(?i)(?<![A-Za-z0-9])(?:api[_ -]?key|access[_ -]?token|secret|password|passwd|pwd)\s*(?::|=|-)\s*[^\s,;]{4,}'
+      - id: bearer_token
+        expression: '(?i)\bbearer\s+[a-z0-9._~+/-]{8,}={0,2}'
+      - id: private_key
+        expression: '-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'
+      - id: openai_key
+        expression: '\bsk-[A-Za-z0-9_-]{16,}\b'
+      - id: github_token
+        expression: '\bgh[pousr]_[A-Za-z0-9]{20,}\b'
+  pii:
+    label: Personal information
+    detail: detected secrets in the input
+    patterns:
+      - id: email
+        expression: '(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b'
+      - id: labeled_name
+        expression: '(?i)\b(?:my\s+name\s+is|full\s+name\s*(?::|=|-))\s+[A-Z][A-Za-z''-]{1,}(?:\s+[A-Z][A-Za-z''-]{1,}){0,3}'
+      - id: phone_number
+        expression: '(?i)\b(?:phone|mobile|telephone)(?:\s+number)?\s*(?::|=|-)\s*\+?[\d() -]{8,20}\d'
+      - id: credit_card
+        expression: '(?<!\d)(?:\d[ -]*?){13,19}(?!\d)'
+      - id: social_security_number
+        expression: '(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)'
+      - id: indian_aadhaar
+        expression: '(?<!\d)[2-9]\d{3}[ -]?\d{4}[ -]?\d{4}(?!\d)'
+  profanity:
+    label: Profanity
+    detail: detected prohibited language
+    patterns:
+      - id: default_profanity
+        expression: '(?i)\b(?:fuck(?:er|ing|ed)?|shit(?:ty)?|bitch(?:es)?|cunt|asshole|motherfucker|bastard)\b'
+  prompt_injection:
+    label: Prompt injection
+    detail: detected prompt injection
+    patterns:
+      - id: instruction_override
+        expression: '(?i)\b(?:ignore|disregard|forget|override)\b.{0,48}\b(?:previous|prior|system|developer|safety|instructions?|rules?|prompt)\b'
+      - id: prompt_exfiltration
+        expression: '(?i)\b(?:reveal|print|show|repeat|leak|expose)\b.{0,48}\b(?:system prompt|developer message|hidden instructions?|secrets?|api keys?)\b'
+      - id: role_override
+        expression: '(?i)\b(?:you are now|act as|enter)\b.{0,32}\b(?:unrestricted|developer mode|jailbreak|dan)\b'
+  high_risk:
+    label: High-risk input
+    detail: detected high-risk instructions
+    patterns:
+      - id: credential_theft
+        expression: '(?i)\b(?:steal|harvest|exfiltrate|dump)\b.{0,48}\b(?:credentials?|passwords?|tokens?|cookies?)\b'
+      - id: destructive_malware
+        expression: '(?i)\b(?:ransomware|credential stealer|keylogger|botnet)\b'

@@ -1,0 +1,7 @@
+TalosAI
+Copyright 2026 Samarth Kumar
+
+This product depends on third-party software distributed under its own license terms.
+Dependency manifests and lockfiles identify those components. Their upstream distributions
+include the applicable licenses and notices. The Talos Python wheel and source archive do
+not vendor dependency source or binaries.

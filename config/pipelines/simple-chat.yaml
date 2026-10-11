@@ -1,0 +1,31 @@
+schema_version: 1
+id: default
+version: 1
+description: Initial provider-independent conversation pipeline.
+model_alias: default_chat
+prompt_alias: default_system
+nodes:
+  - id: input
+    kind: validated_input
+  - id: context
+    kind: knowledge_context
+  - id: model
+    kind: chat_model_stream
+  - id: persist
+    kind: persist_response
+edges:
+  - [input, context]
+  - [context, model]
+  - [model, persist]
+policies:
+  max_steps: ${TALOS_AGENT_MAX_STEPS}
+  max_tool_calls: ${TALOS_MAX_TOOL_CALLS_PER_RUN}
+  max_tokens: ${TALOS_MAX_TOKENS_PER_RUN}
+  timeout_seconds: ${TALOS_AGENT_TIMEOUT_SECONDS}
+  model_max_retries: ${TALOS_MODEL_MAX_RETRIES}
+capabilities:
+  repository: false
+  rag: true
+  skills: true
+  tools: true
+  memory: false

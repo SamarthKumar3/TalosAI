@@ -1,0 +1,41 @@
+version: 1
+
+agent:
+  name: Talos
+
+model:
+  provider: openrouter
+  model: default_chat
+  temperature: 0.2
+
+capabilities:
+  repository: true
+  tools: true
+  skills: true
+  rag: true
+  memory: true
+
+rag:
+  mode: basic
+  query_rewriting: false
+  query_expansion: false
+  retrieval:
+    dense: true
+    sparse: false
+  fusion: none
+  reranking: false
+
+memory:
+  short_term: true
+  summarization: true
+  long_term: false
+
+observability:
+  tracing: true
+  usage_tracking: true
+
+budgets:
+  max_agent_steps: 10
+  max_tool_calls_per_run: 5
+  max_tokens_per_run: 20000
+  max_execution_seconds: 120

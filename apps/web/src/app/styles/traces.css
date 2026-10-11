@@ -1,0 +1,24 @@
+.assistant-response-body.has-tools .markdown-response { display: contents; }
+.assistant-response-body.has-tools .markdown-response > p:last-child { display: inline; }
+.tool-usage-chips { display: inline-flex; gap: 4px; margin-inline-start: 6px; vertical-align: middle; }
+.tool-usage-chip { position: relative; display: inline-flex; }
+.tool-usage-icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid var(--color-line); border-radius: var(--radius-pill); color: var(--color-accent); background: var(--color-surface); cursor: pointer; }
+.tool-usage-icon svg { width: 16px; height: 16px; }
+.tool-usage-failed { color: var(--color-danger); border-style: dashed; }
+.tool-usage-tooltip { display: none; position: absolute; bottom: calc(100% + 6px); inset-inline-end: 0; width: max-content; max-width: min(280px, 75vw); padding: 8px 12px; border: 1px solid var(--color-line); border-radius: var(--radius-small); color: var(--color-ink); background: var(--color-surface-solid); box-shadow: var(--shadow-small); overflow-wrap: anywhere; font-size: 13px; z-index: 5; }
+.tool-usage-chip:hover .tool-usage-tooltip, .tool-usage-chip:focus-within .tool-usage-tooltip, .tool-usage-chip.is-open .tool-usage-tooltip { display: block; }
+.tool-usage-chip.is-dismissed .tool-usage-tooltip { display: none; }
+.trace-inspector { display: grid; gap: 20px; padding: 24px; min-width: 0; }
+.trace-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+.trace-controls label { display: grid; gap: 8px; }
+.trace-inspector button, .trace-inspector select { min-height: 44px; border: 1px solid var(--color-line); border-radius: var(--radius-small); padding: 10px 14px; color: var(--color-ink); background: var(--color-surface); font: inherit; }
+.trace-inspector button { cursor: pointer; }
+.trace-inspector button:disabled { opacity: .55; cursor: default; }
+.trace-run-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 12px; padding: 0; list-style: none; }
+.trace-run-list button { display: grid; gap: 8px; width: 100%; text-align: start; overflow-wrap: anywhere; }
+.trace-run-list button[aria-pressed="true"] { border-color: var(--color-accent); box-shadow: var(--shadow-focus); }
+.trace-run-list time, .trace-run-list small, .trace-stage-list span { color: var(--color-ink-soft); }
+.trace-detail { padding: 24px; border: 1px solid var(--color-line); border-radius: var(--radius-large); background: var(--color-surface); overflow-wrap: anywhere; }
+.trace-stage-list { display: grid; gap: 12px; padding-inline-start: 24px; }
+.trace-stage-list li > * { display: block; }
+@media (max-width: 600px) { .trace-inspector, .trace-detail { padding: 16px; } }

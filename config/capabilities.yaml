@@ -1,0 +1,22 @@
+schema_version: 1
+capabilities:
+  rag:
+    label: Knowledge retrieval
+    description: Retrieve indexed local knowledge with citations.
+    requires: []
+  repository:
+    label: Repository intelligence
+    description: Search versioned repository snapshots with source references.
+    requires: [rag]
+  tools:
+    label: Tools
+    description: Execute validated, versioned tool adapters within configured budgets.
+    requires: []
+  skills:
+    label: Skills
+    description: Add versioned Markdown instructions to the runtime snapshot.
+    requires: []
+  memory:
+    label: Memory
+    description: Summarize conversation context and manage explicit retained facts.
+    requires: []

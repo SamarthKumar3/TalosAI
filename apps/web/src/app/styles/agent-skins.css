@@ -1,0 +1,70 @@
+/* One palette per skin, with independent light/dark modes. */
+:root, :root[data-theme="light"] {
+  --color-canvas: #f4f5ef; --color-canvas-deep: #e9eee5;
+  --color-surface: rgb(255 255 255 / 58%); --color-surface-strong: rgb(255 255 255 / 78%);
+  --color-surface-solid: #ffffff; --color-surface-muted: rgb(230 235 227 / 62%);
+  --color-ink: #202823; --color-ink-soft: #4c5951; --color-ink-faint: #58635c;
+  --color-on-accent: #ffffff; --color-line: rgb(32 51 40 / 18%); --color-line-strong: rgb(32 51 40 / 32%);
+  --color-highlight: rgb(255 255 255 / 85%); --color-glass-edge: rgb(255 255 255 / 84%);
+  --color-glass-sheen: rgb(255 255 255 / 35%); --color-code: #e8ede6; --color-danger: #a42e3e;
+  --color-scrim: rgb(15 25 20 / 42%); --color-chart-track: rgb(60 80 65 / 12%);
+  --color-warning: #8b5d17;
+  --color-cyan: #805b22;
+}
+:root[data-theme="dark"] {
+  --color-canvas: #151c19; --color-canvas-deep: #1e2923;
+  --color-surface: rgb(31 42 36 / 66%); --color-surface-strong: rgb(36 48 41 / 88%);
+  --color-surface-solid: #243029; --color-surface-muted: rgb(46 61 52 / 72%);
+  --color-ink: #f0f3ed; --color-ink-soft: #c3cdc3; --color-ink-faint: #acb9ae;
+  --color-on-accent: #12231b; --color-line: rgb(210 225 212 / 18%); --color-line-strong: rgb(210 225 212 / 32%);
+  --color-highlight: rgb(255 255 255 / 12%); --color-glass-edge: rgb(255 255 255 / 15%);
+  --color-glass-sheen: rgb(255 255 255 / 7%); --color-code: #101713; --color-danger: #ffa8b4;
+  --color-scrim: rgb(0 10 5 / 72%); --color-chart-track: rgb(210 225 212 / 12%);
+  --color-warning: #edc37d;
+  --color-cyan: #e8c181;
+}
+:root, :root[data-skin="sage"] { --color-accent: #29634a; --color-accent-strong: #204e3a; }
+:root[data-theme="dark"], :root[data-theme="dark"][data-skin="sage"] { --color-accent: #a4c9a8; --color-accent-strong: #c2dec2; }
+:root[data-skin="sand"] { --color-accent: #805331; --color-accent-strong: #694126; }
+:root[data-theme="dark"][data-skin="sand"] { --color-accent: #e0bc91; --color-accent-strong: #f0d2ae; }
+:root[data-skin="rose"] { --color-accent: #963f53; --color-accent-strong: #7c3042; }
+:root[data-theme="dark"][data-skin="rose"] { --color-accent: #e7abb8; --color-accent-strong: #f6c7d0; }
+:root[data-skin="ocean"] { --color-accent: #146373; --color-accent-strong: #0d4f5d; }
+:root[data-theme="dark"][data-skin="ocean"] { --color-accent: #92cbd1; --color-accent-strong: #b5e0e4; }
+:root[data-skin="graphite"] { --color-accent: #47545b; --color-accent-strong: #354149; }
+:root[data-theme="dark"][data-skin="graphite"] { --color-accent: #bdc7cb; --color-accent-strong: #d8e0e3; }
+
+:root {
+  --color-accent-soft: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  --color-accent-glow: color-mix(in srgb, var(--color-accent) 24%, transparent);
+  --color-cyan-soft: var(--color-accent-soft);
+  --color-violet: var(--color-accent); --color-violet-soft: var(--color-accent-soft);
+  --gradient-canvas: var(--color-canvas); --gradient-accent: var(--color-accent); --gradient-brand: var(--color-accent);
+}
+.skin-heading { margin-top: 32px; }
+.skin-switcher { display: grid; gap: 10px; margin-top: 16px; }
+.skin-switcher button { display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 14px 18px; text-align: left; color: var(--color-ink); background: var(--color-surface); border: 1px solid var(--color-line-strong); border-radius: var(--radius-medium); }
+.skin-switcher button[aria-pressed="true"] { border-color: var(--color-accent); background: var(--color-accent-soft); }
+.skin-switcher i { width: 28px; height: 28px; flex: none; border-radius: 50%; }
+.skin-switcher strong, .skin-switcher small { display: block; }
+.skin-switcher small { color: var(--color-ink-soft); }
+.skin-selected { display: inline-grid; place-items: center; margin-left: auto; color: var(--color-accent-strong); }
+.skin-selected svg { width: 20px; height: 20px; }
+.theme-switcher button, .skin-switcher button, .icon-button, .settings-button, .attachment-button, .voice-button {
+  box-shadow: var(--shadow-inset); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+.brand-mark::after, .empty-mark::after { display: none; }
+.status-dot { animation: none; }
+.attachment-remove { width: 44px; height: 44px; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sidebar, .topbar, .composer, .settings-panel, .theme-switcher button, .skin-switcher button { background: var(--color-surface-solid); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root { --color-surface: var(--color-surface-solid); --color-surface-strong: var(--color-surface-solid); --color-surface-muted: var(--color-surface-solid); }
+  * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+}
+@media (forced-colors: active) { .skin-switcher button[aria-pressed="true"], .theme-switcher button[aria-pressed="true"] { outline: 2px solid Highlight; } }
+@media (max-width: 480px) { .theme-switcher { grid-template-columns: 1fr; } }
+
+@media (max-width: 860px) { .sidebar { visibility: hidden; } .sidebar.is-open { visibility: visible; } }
+@media (max-width: 860px) { .settings-heading .icon-button { display: grid; } }

@@ -1,0 +1,241 @@
+/* Phase 11 evaluations */
+.evaluation-view {
+  gap: 20px;
+}
+
+.evaluation-actions[hidden],
+.evaluation-history-legacy[hidden] {
+  display: none;
+}
+
+.evaluation-tabs {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px;
+  background: var(--surface-muted);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.evaluation-tabs button {
+  min-height: 44px;
+  padding: 8px 16px;
+  color: var(--ink-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  font-weight: 700;
+}
+
+.evaluation-tabs button[aria-selected="true"] {
+  color: var(--accent-strong);
+  background: var(--surface-raised);
+  border: 1px solid var(--line-strong);
+}
+
+.evaluation-intro {
+  max-width: 72ch;
+}
+
+.evaluation-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.evaluation-form,
+.evaluation-history,
+.evaluation-run {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.evaluation-form {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+}
+
+.evaluation-form > div:first-child span,
+.evaluation-history .monitoring-card-heading span {
+  color: var(--ink-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.evaluation-form h4 {
+  margin: 2px 0 8px;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.evaluation-form label {
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.evaluation-form input,
+.evaluation-form textarea,
+.evaluation-form select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: var(--surface-muted);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  font: inherit;
+}
+
+.evaluation-form textarea {
+  resize: vertical;
+}
+
+.evaluation-form :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.evaluation-history {
+  padding: 18px;
+}
+
+.evaluation-run-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.evaluation-run {
+  overflow: clip;
+  background: var(--surface-muted);
+}
+
+.evaluation-run > summary {
+  display: flex;
+  min-height: 56px;
+  padding: 12px 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  list-style-position: inside;
+}
+
+.evaluation-run > summary span:first-child {
+  display: grid;
+  gap: 2px;
+}
+
+.evaluation-run > summary strong {
+  color: var(--ink);
+  text-transform: capitalize;
+}
+
+.evaluation-run > summary small,
+.evaluation-comparison small {
+  color: var(--ink-muted);
+}
+
+.gate-pass,
+.gate-neutral {
+  padding: 6px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.gate-pass {
+  color: var(--accent-strong);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+
+.evaluation-comparison {
+  display: grid;
+  gap: 12px;
+  padding: 0 14px 14px;
+}
+
+.evaluation-comparison article {
+  display: grid;
+  gap: 7px;
+}
+
+.evaluation-comparison article > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--ink);
+  text-transform: capitalize;
+}
+
+.evaluation-meter {
+  display: block;
+  height: 7px;
+  overflow: hidden;
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.evaluation-meter i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: inherit;
+}
+
+.evaluation-delta {
+  margin: 2px 0 0;
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.evaluation-cancel {
+  min-height: 44px;
+  margin: 0 14px 14px;
+  padding: 0 14px;
+  color: var(--ink);
+  background: var(--surface-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.evaluation-cancel:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.evaluation-run .config-details {
+  margin: 0 14px 14px;
+}
+
+.evaluation-run .config-details ul {
+  margin: 10px 0 0;
+  padding-left: 20px;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+}
+
+@media (max-width: 980px) {
+  .evaluation-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .evaluation-run > summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

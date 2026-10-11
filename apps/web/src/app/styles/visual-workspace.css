@@ -1,0 +1,221 @@
+.workspace { position: relative; background: transparent; }
+.sidebar,
+.topbar,
+.composer,
+.settings-panel {
+  background: var(--color-surface);
+  border-color: var(--color-line);
+  box-shadow: var(--shadow-large), var(--shadow-inset);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+.sidebar {
+  min-height: calc(100dvh - 20px);
+  margin: 10px 0 10px 10px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-inset), var(--shadow-medium);
+}
+.brand-mark,
+.empty-mark {
+  position: relative;
+  overflow: hidden;
+  color: var(--color-on-accent);
+  background: var(--gradient-brand);
+  border: 1px solid var(--color-highlight);
+  box-shadow: var(--shadow-accent), var(--shadow-inset);
+}
+.brand-mark::after,
+.empty-mark::after {
+  position: absolute;
+  inset: -80%;
+  background: var(--gradient-shimmer);
+  content: "";
+  transform: translateX(-70%) rotate(15deg);
+  animation: talos-shimmer 5s var(--ease-standard) infinite;
+}
+.brand-name { color: var(--color-ink); font-weight: 760; }
+.brand-caption,
+.section-label,
+.eyebrow { color: var(--color-ink-faint); }
+.icon-button,
+.new-chat-button,
+.settings-button,
+.history-item,
+.suggestions button,
+.voice-button,
+.send-button,
+.add-rule-button,
+.save-settings-button {
+  transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard);
+}
+.icon-button { color: var(--color-ink-soft); border-radius: var(--radius-medium); }
+.icon-button:hover {
+  color: var(--color-ink);
+  background: var(--color-surface-strong);
+  border-color: var(--color-line);
+  box-shadow: var(--shadow-small), var(--shadow-inset);
+  transform: translateY(-1px);
+}
+.new-chat-button,
+.send-button,
+.save-settings-button {
+  color: var(--color-on-accent);
+  background: var(--gradient-accent);
+  border-color: transparent;
+  box-shadow: var(--shadow-accent), var(--shadow-inset);
+}
+.new-chat-button { border-radius: var(--radius-medium); }
+.new-chat-button:hover,
+.send-button:hover:not(:disabled),
+.save-settings-button:hover:not(:disabled) {
+  background: var(--gradient-accent);
+  border-color: transparent;
+  box-shadow: var(--shadow-accent), var(--shadow-inset);
+  transform: translateY(-2px);
+}
+.history { scrollbar-color: var(--color-line-strong) transparent; }
+.history-item { border-radius: var(--radius-medium); }
+.history-item:hover {
+  background: var(--color-surface-strong);
+  border-color: var(--color-line);
+  box-shadow: var(--shadow-inset);
+  transform: translateX(2px);
+}
+.history-item[aria-current="page"] { background: var(--color-accent-soft); border-color: var(--color-accent-glow); box-shadow: var(--shadow-inset); }
+.history-item[aria-current="page"] > svg { color: var(--color-accent); }
+.history-skeleton span {
+  background: var(--color-surface-muted);
+  background-image: var(--gradient-shimmer);
+  background-size: 220% 100%;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-medium);
+  animation: talos-skeleton 1.5s var(--ease-standard) infinite;
+}
+.settings-button {
+  color: var(--color-ink-soft);
+  background: var(--color-surface);
+  border-color: var(--color-line);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-inset);
+}
+.settings-button:hover {
+  color: var(--color-ink);
+  background: var(--color-surface-strong);
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-small), var(--shadow-inset);
+  transform: translateY(-1px);
+}
+.main-panel { position: relative; }
+.topbar {
+  height: calc(var(--topbar-height) - 10px);
+  margin: 10px 10px 0;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-small), var(--shadow-inset);
+}
+.status-dot { background: var(--color-cyan); box-shadow: 0 0 0 4px var(--color-cyan-soft); animation: talos-status 2.4s var(--ease-standard) infinite; }
+.snapshot-badge,
+.enforced-badge { color: var(--color-accent-strong); background: var(--color-accent-soft); border-color: var(--color-accent-glow); border-radius: var(--radius-pill); box-shadow: var(--shadow-inset); }
+.conversation { scrollbar-color: var(--color-line-strong) transparent; }
+.empty-state { animation: talos-enter var(--duration-slow) var(--ease-spring) both; }
+.empty-state h1 { color: var(--color-ink); text-wrap: balance; }
+.empty-state > p:not(.eyebrow) { color: var(--color-ink-soft); text-wrap: pretty; }
+.suggestions button {
+  position: relative;
+  overflow: hidden;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border-color: var(--color-line);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-small), var(--shadow-inset);
+  backdrop-filter: blur(var(--glass-blur));
+}
+.suggestions button:hover {
+  background: var(--color-surface-strong);
+  border-color: var(--color-accent-glow);
+  box-shadow: var(--shadow-medium), var(--shadow-inset);
+  transform: translateY(-3px);
+}
+.snapshot-notice { color: var(--color-ink-soft); background: var(--color-surface-muted); border-color: var(--color-line); border-radius: var(--radius-medium); box-shadow: var(--shadow-inset); backdrop-filter: blur(var(--glass-blur)); }
+.message { animation: talos-message-in var(--duration-medium) var(--ease-spring) both; }
+.message-author,
+.usage-line,
+.composer-help,
+.voice-status { color: var(--color-ink-faint); }
+.message-user .message-content { background: var(--color-accent-soft); border-color: var(--color-accent-glow); border-radius: var(--radius-large) var(--radius-large) var(--radius-small) var(--radius-large); box-shadow: var(--shadow-small), var(--shadow-inset); backdrop-filter: blur(var(--glass-blur)); }
+.message-assistant .message-content { color: var(--color-ink); }
+.typing::after { color: var(--color-accent); }
+.composer-wrap { position: relative; }
+.composer { border-color: var(--color-line-strong); border-radius: var(--radius-large); box-shadow: var(--shadow-medium), var(--shadow-inset); }
+.composer:focus-within { border-color: var(--color-accent); box-shadow: var(--shadow-focus), var(--shadow-medium), var(--shadow-inset); transform: translateY(-1px); }
+.composer textarea { color: var(--color-ink); }
+.composer textarea::placeholder { color: var(--color-ink-faint); }
+.send-button,
+.voice-button { border-radius: var(--radius-medium); }
+.voice-button { color: var(--color-ink-soft); background: var(--color-surface-muted); border-color: var(--color-line); box-shadow: var(--shadow-inset); }
+.voice-button:hover:not(:disabled),
+.voice-button.is-listening { color: var(--color-accent-strong); background: var(--color-accent-soft); border-color: var(--color-accent-glow); box-shadow: var(--shadow-focus), var(--shadow-inset); transform: translateY(-1px); }
+.stop-button { color: var(--color-danger); background: var(--color-surface-muted); border-color: var(--color-line-strong); box-shadow: var(--shadow-inset); }
+.error-banner { color: var(--color-danger); background: var(--color-surface-strong); border-color: var(--color-danger); border-radius: var(--radius-medium); box-shadow: var(--shadow-medium), var(--shadow-inset); backdrop-filter: blur(var(--glass-blur)); }
+.mobile-scrim,
+.settings-scrim { background: var(--color-scrim); backdrop-filter: blur(5px); transition: opacity var(--duration-medium) var(--ease-standard), visibility var(--duration-medium) var(--ease-standard); }
+.settings-panel { background: var(--color-surface-strong); border-color: var(--color-line); box-shadow: var(--shadow-large), var(--shadow-inset); transition: transform var(--duration-medium) var(--ease-spring); }
+.settings-heading h2,
+.settings-section-heading h3,
+.guardrail-group h4,
+.immutable-rules h4 { color: var(--color-ink); }
+.settings-intro,
+.settings-list dt,
+.snapshot-card p,
+.settings-helper,
+.field-help,
+.guardrail-group p,
+.immutable-rules > p,
+.immutable-rule span,
+.settings-status { color: var(--color-ink-soft); }
+.settings-list,
+.settings-list div,
+.guardrail-settings { border-color: var(--color-line); }
+.config-details pre { color: var(--color-ink-soft); background: var(--color-code); border-color: var(--color-line); border-radius: var(--radius-medium); box-shadow: var(--shadow-inset); }
+.snapshot-card,
+.guardrail-group,
+.immutable-rules { background: var(--color-surface-muted); border-color: var(--color-line); border-radius: var(--radius-large); box-shadow: var(--shadow-inset); }
+.guardrail-settings textarea,
+.adder-row input { color: var(--color-ink); background: var(--color-surface-strong); border-color: var(--color-line-strong); border-radius: var(--radius-medium); }
+.guardrail-settings textarea:focus,
+.adder-row input:focus { border-color: var(--color-accent); box-shadow: var(--shadow-focus); }
+.add-rule-button { color: var(--color-accent-strong); background: var(--color-accent-soft); border-color: var(--color-accent-glow); border-radius: var(--radius-medium); box-shadow: var(--shadow-inset); }
+.add-rule-button:hover:not(:disabled) { box-shadow: var(--shadow-focus), var(--shadow-inset); transform: translateY(-1px); }
+.rule-chip { background: var(--color-surface-strong); border-color: var(--color-line); border-radius: var(--radius-pill); box-shadow: var(--shadow-inset); }
+.rule-chip button { color: var(--color-ink-soft); background: transparent; border-color: transparent; }
+.immutable-rule { border-color: var(--color-line); }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sidebar,
+  .topbar,
+  .composer,
+  .settings-panel,
+  .suggestions button,
+  .snapshot-notice { background: var(--color-surface-solid); }
+}
+@keyframes talos-enter { from { opacity: 0; transform: translateY(10px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes talos-message-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes talos-shimmer { 0%, 70% { transform: translateX(-70%) rotate(15deg); } 100% { transform: translateX(70%) rotate(15deg); } }
+@keyframes talos-skeleton { from { background-position: 180% 0; } to { background-position: -30% 0; } }
+@keyframes talos-status { 0%, 100% { box-shadow: 0 0 0 4px var(--color-cyan-soft); } 50% { box-shadow: 0 0 0 6px var(--color-cyan-soft); } }
+@keyframes talos-drift { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(4vw, 3vh, 0) scale(1.08); } }
+@media (max-width: 860px) {
+  .sidebar { min-height: 100dvh; background: var(--color-surface-solid); margin: 0; border-radius: 0 var(--radius-xl) var(--radius-xl) 0; transition: transform var(--duration-medium) var(--ease-spring); }
+  .topbar { margin: 8px 8px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after,
+  .brand-mark::after,
+  .empty-mark::after,
+  .status-dot,
+  .history-skeleton span,
+  .message,
+  .empty-state { animation: none; }
+}

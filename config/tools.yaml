@@ -1,0 +1,19 @@
+schema_version: 1
+defaults:
+  timeout_seconds: ${TALOS_TOOL_TIMEOUT_SECONDS}
+  max_response_bytes: ${TALOS_TOOL_MAX_RESPONSE_BYTES}
+tools:
+  calculator:
+    version: "1.0.0"
+    description: Evaluate bounded arithmetic without executing code.
+    entrypoint: talos.tools.builtins:calculator
+    timeout_seconds: ${TALOS_TOOL_TIMEOUT_SECONDS}
+    max_response_bytes: ${TALOS_TOOL_MAX_RESPONSE_BYTES}
+    side_effect: false
+  current_utc_time:
+    version: "1.0.0"
+    description: Return the current UTC timestamp.
+    entrypoint: talos.tools.builtins:current_utc_time
+    timeout_seconds: ${TALOS_TOOL_TIMEOUT_SECONDS}
+    max_response_bytes: ${TALOS_TOOL_MAX_RESPONSE_BYTES}
+    side_effect: false

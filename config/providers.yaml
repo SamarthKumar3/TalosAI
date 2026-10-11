@@ -1,0 +1,21 @@
+schema_version: 1
+providers:
+  openrouter:
+    display_name: OpenRouter
+    adapter: talos.providers.openai_compatible:OpenAICompatibleProvider
+    api_base: ${OPENROUTER_API_BASE}
+    api_key_env: OPENROUTER_API_KEY
+    key_url: https://openrouter.ai/settings/keys
+    credential_store_key: openrouter_api_key
+    connect_timeout_seconds: ${TALOS_PROVIDER_CONNECT_TIMEOUT_SECONDS}
+    read_timeout_seconds: ${TALOS_PROVIDER_READ_TIMEOUT_SECONDS}
+    validation_path: /key
+  openai:
+    display_name: OpenAI
+    adapter: talos.providers.openai:OpenAIProvider
+    api_base: ${OPENAI_API_BASE}
+    api_key_env: OPENAI_API_KEY
+    key_url: https://platform.openai.com/api-keys
+    credential_store_key: openai_api_key
+    connect_timeout_seconds: ${TALOS_PROVIDER_CONNECT_TIMEOUT_SECONDS}
+    read_timeout_seconds: ${TALOS_PROVIDER_READ_TIMEOUT_SECONDS}

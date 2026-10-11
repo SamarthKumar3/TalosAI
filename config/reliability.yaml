@@ -1,0 +1,13 @@
+schema_version: 1
+model_retry:
+  max_attempts: ${TALOS_MODEL_MAX_ATTEMPTS}
+  base_delay_milliseconds: ${TALOS_MODEL_RETRY_BASE_MILLISECONDS}
+  max_delay_milliseconds: ${TALOS_MODEL_RETRY_MAX_MILLISECONDS}
+  jitter_ratio: ${TALOS_MODEL_RETRY_JITTER_RATIO}
+memory:
+  summary_after_messages: ${TALOS_MEMORY_SUMMARY_AFTER_MESSAGES}
+  keep_recent_messages: ${TALOS_MEMORY_KEEP_RECENT_MESSAGES}
+  max_summary_characters: ${TALOS_MEMORY_MAX_SUMMARY_CHARACTERS}
+  summary_strategy: ${TALOS_MEMORY_SUMMARY_STRATEGY}
+  max_long_term_items: ${TALOS_MEMORY_MAX_LONG_TERM_ITEMS}
+  max_memory_characters: ${TALOS_MEMORY_MAX_CHARACTERS}
