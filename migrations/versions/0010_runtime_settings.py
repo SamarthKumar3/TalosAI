@@ -1,6 +1,7 @@
 """Persist UI runtime feature overrides."""
 
 from alembic import op
+
 from talos.persistence.models import RuntimeSettingsRow
 
 revision = "0010_runtime_settings"

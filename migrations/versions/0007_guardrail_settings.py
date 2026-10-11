@@ -1,6 +1,7 @@
 """Persist additive runtime guardrail settings."""
 
 from alembic import op
+
 from talos.persistence.models import GuardrailSettingsRow
 
 revision = "0007_guardrail_settings"

@@ -2,6 +2,7 @@
 
 from alembic import op
 from sqlalchemy import Column, DateTime, inspect
+
 from talos.persistence.models import KnowledgeChunkRow, KnowledgeSourceRow
 
 revision = "0002_phase6_knowledge"

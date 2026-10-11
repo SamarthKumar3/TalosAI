@@ -12,7 +12,19 @@ def initialize_project(destination: Path) -> Path:
     templates = files("talos").joinpath("templates")
     if not templates.is_dir():
         # Editable checkouts use the same reviewed files that the wheel bundles.
-        templates = Path(__file__).resolve().parents[5]
+        project = next(
+            (
+                parent
+                for parent in Path(__file__).resolve().parents
+                if (parent / "pyproject.toml").is_file()
+                and (parent / "talos.example.yaml").is_file()
+                and (parent / "config").is_dir()
+            ),
+            None,
+        )
+        if project is None:
+            raise ConfigurationError("SDK templates are unavailable. Reinstall Talos.")
+        templates = project
     planned: list[tuple[Path, bytes]] = []
 
     def collect(source: object, relative: Path) -> None:

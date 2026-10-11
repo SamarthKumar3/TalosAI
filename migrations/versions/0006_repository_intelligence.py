@@ -1,6 +1,7 @@
 """Add versioned repository indexes and cited code chunks."""
 
 from alembic import op
+
 from talos.persistence.models import RepositoryChunkRow, RepositoryRow, RepositoryVersionRow
 
 revision = "0006_repository_intelligence"

@@ -3,7 +3,7 @@ FROM python:3.12-alpine@sha256:1b668429b3511ab407d8e00648891631b0b1a4d7e15e3ca70
 WORKDIR /build
 RUN python -m pip install --no-cache-dir pip==26.2.1
 COPY pyproject.toml README.md LICENSE NOTICE .env.example talos.example.yaml ./
-COPY packages ./packages
+COPY src ./src
 COPY config ./config
 COPY skills ./skills
 ARG TALOS_RUNTIME_EXTRAS=service

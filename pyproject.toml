@@ -63,7 +63,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["packages/talos/src/talos"]
+packages = ["src/talos"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "config" = "talos/templates/config"
@@ -73,7 +73,7 @@ packages = ["packages/talos/src/talos"]
 
 [tool.hatch.build.targets.sdist]
 include = [
-  "/packages/talos/src/talos/**/*.py", "/config/**", "/skills/concise-explainer.md",
+  "/src/talos/**/*.py", "/config/**", "/skills/concise-explainer.md",
   "/.env.example", "/talos.example.yaml", "/README.md", "/LICENSE", "/NOTICE", "/pyproject.toml",
 ]
 
@@ -84,8 +84,11 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC"]
 
+[tool.ruff.lint.isort]
+known-first-party = ["talos"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true
 packages = ["talos"]
-mypy_path = "packages/talos/src"
+mypy_path = "src"

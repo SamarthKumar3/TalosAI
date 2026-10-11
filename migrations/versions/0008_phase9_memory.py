@@ -1,6 +1,7 @@
 """Persist Phase 9 conversation summaries and explicit memory."""
 
 from alembic import op
+
 from talos.persistence.models import ConversationSummaryRow, MemoryRow
 
 revision = "0008_phase9_memory"

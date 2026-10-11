@@ -1,6 +1,7 @@
 """Add durable tool approval proposals."""
 
 from alembic import op
+
 from talos.persistence.models import ToolApprovalRow
 
 revision = "0004_tool_approvals"
