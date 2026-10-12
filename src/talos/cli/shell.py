@@ -4,7 +4,10 @@ import inspect
 import json
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Protocol
+
+import httpx
 
 from talos.agent import TalosAgent
 from talos.cli.rendering import ShellRenderer, safe_configuration_rows
@@ -41,7 +44,8 @@ class TalosShell:
         ui_opener: Callable[[], Awaitable[bool]] | None = None,
         knowledge_importer: Callable[[str], Awaitable[str]] | None = None,
         skill_updater: Callable[[str, str], Awaitable[tuple[Skill, ...]]] | None = None,
-        repository_handler: Callable[[tuple[str, ...]], Awaitable[str]] | None = None,
+        repository_handler: Callable[[tuple[str, ...], str], Awaitable[str]] | None = None,
+        artifacts_directory: Path | None = None,
     ) -> None:
         self._agent = agent
         self._reader = reader
@@ -51,6 +55,7 @@ class TalosShell:
         self._knowledge_importer = knowledge_importer
         self._skill_updater = skill_updater
         self._repository_handler = repository_handler
+        self._artifacts_directory = artifacts_directory
         self._conversation_id: str | None = None
         self._active_run_id: str | None = None
         self._history: list[Exchange] = []
@@ -101,6 +106,17 @@ class TalosShell:
                     self._output_tokens += int(usage["output_tokens"])
             self._renderer.end_response()
             self._history.append(Exchange(prompt, response))
+            if self._artifacts_directory is not None:
+                from talos.repository_diagrams import is_diagram_request, write_hld
+
+                if is_diagram_request(prompt) and "```mermaid" in response:
+                    try:
+                        target = write_hld(response, self._artifacts_directory)
+                        self._renderer.text(
+                            f"Mermaid file: {target} (open in https://mermaid.live)"
+                        )
+                    except TalosError as exc:
+                        self._renderer.text(f"Diagram could not be saved: {exc}", style="yellow")
         except KeyboardInterrupt:
             if self._active_run_id is not None:
                 self._agent.cancel(self._active_run_id)
@@ -112,6 +128,11 @@ class TalosShell:
         except TalosError as exc:
             self._renderer.end_response()
             self._renderer.text(f"{exc.code}: {exc}", style="red")
+        except httpx.HTTPError:
+            self._renderer.end_response()
+            self._renderer.text(
+                "Could not reach the local runtime. Run talos doctor and retry.", style="red"
+            )
         finally:
             self._active_run_id = None
 
@@ -325,7 +346,7 @@ class TalosShell:
         try:
             skills = await self._skill_updater(routed.arguments[0], routed.arguments[1])
             self._renderer.text("Active skills: " + ", ".join(skill.id for skill in skills))
-        except (TalosError, OSError) as exc:
+        except (TalosError, OSError, httpx.HTTPError) as exc:
             self._renderer.text(str(exc), style="red")
 
     async def _command_knowledge(self, routed: RoutedInput) -> None:
@@ -378,8 +399,12 @@ class TalosShell:
             self._renderer.text("Repository indexing requires the local service.")
             return
         try:
-            self._renderer.text(await self._repository_handler(routed.arguments))
-        except (TalosError, OSError) as exc:
+            if self._conversation_id is None:
+                self._conversation_id = (await self._agent.new_conversation()).id
+            self._renderer.text(
+                await self._repository_handler(routed.arguments, self._conversation_id)
+            )
+        except (TalosError, OSError, httpx.HTTPError) as exc:
             self._renderer.text(str(exc), style="red")
 
     def _render_help(self) -> None:
@@ -392,7 +417,7 @@ class TalosShell:
             "/status": "Show runtime and conversation status",
             "/config": "Show safe resolved configuration",
             "/usage": "Show session token usage",
-            _REPOSITORY_COMMAND: "Repository intelligence status",
+            _REPOSITORY_COMMAND: "Index, ask about a repository, or save its Mermaid HLD",
             _KNOWLEDGE_COMMAND: "Knowledge status",
             "/rag": "Retrieval status",
             _TOOLS_COMMAND: "Tool status",

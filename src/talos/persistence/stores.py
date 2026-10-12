@@ -84,6 +84,7 @@ class SqlConversationStore:
         configuration = _snapshot_from_row(configuration_row, resolved)
         return Conversation(
             id=conversation_row.id,
+            repository=conversation_row.repository,
             configuration=configuration,
             messages=[
                 Message(
@@ -104,6 +105,15 @@ class SqlConversationStore:
             ],
             created_at=_aware(conversation_row.created_at),
         )
+
+    async def select_repository(
+        self, conversation_id: str, repository: dict[str, str] | None
+    ) -> None:
+        async with self._database.sessions.begin() as session:
+            row = await session.get(ConversationRow, conversation_id)
+            if row is None:
+                raise ConversationNotFoundError("Conversation was not found")
+            row.repository = dict(repository) if repository else None
 
     async def append(self, conversation_id: str, message: Message) -> None:
         async with self._database.sessions.begin() as session:

@@ -574,3 +574,25 @@
   width: 20px;
   height: 20px;
 }
+.repository-intel-controls { display: grid; gap: .5rem; margin: .25rem .3rem .6rem; }
+.repository-intel-chip { display: flex; align-items: center; gap: .45rem; width: fit-content; max-width: 100%; padding: .2rem .4rem .2rem .7rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); font-size: .82rem; }
+.repository-intel-chip > svg { flex-shrink: 0; }
+.repository-intel-chip > strong { white-space: nowrap; }
+.repository-intel-chip button { display: grid; place-items: center; min-width: 32px; min-height: 32px; border: 0; border-radius: 50%; color: inherit; background: transparent; }
+.repository-selected { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 18rem; }
+.repository-auth { font-size: .8rem; }
+.repository-auth summary { cursor: pointer; width: fit-content; padding: .3rem 0; }
+.repository-auth label { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding-top: .5rem; }
+.repository-auth input { width: min(100%, 22rem); min-height: 36px; background: var(--surface); color: inherit; border: 1px solid var(--line); border-radius: .5rem; padding: .4rem; }
+.repository-auth p, .repository-privacy { font-size: .75rem; margin: 0; line-height: 1.5; }
+.repository-import-status { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; font-size: .8rem; }
+.repository-import-status button, .repository-diagram-download { border: 1px solid var(--line); color: inherit; background: var(--surface); padding: .5rem .7rem; border-radius: .7rem; cursor: pointer; }
+.repository-source-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .8rem; }
+.repository-source { position: relative; max-width: 100%; }
+.repository-source button { display: flex; align-items: center; gap: .4rem; min-height: 36px; max-width: 100%; padding: .35rem .65rem; color: inherit; background: var(--surface); border: 1px solid var(--line); border-radius: .7rem; }
+.repository-source button svg { flex: 0 0 18px; }
+.repository-file-name { max-width: 13rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.repository-source-tooltip { display: none; position: absolute; bottom: calc(100% + .4rem); left: 0; width: max-content; max-width: min(32rem, 75vw); overflow-wrap: anywhere; padding: .6rem; background: var(--surface); color: inherit; border: 1px solid var(--line); border-radius: .5rem; z-index: 10; font-size: .75rem; }
+.repository-source:hover .repository-source-tooltip, .repository-source:focus-within .repository-source-tooltip { display: block; }
+.repository-diagram-download { margin-top: .8rem; }
+@media (max-width: 600px) { .repository-selected { max-width: 5rem; } .repository-intel-chip { font-size: .75rem; } }

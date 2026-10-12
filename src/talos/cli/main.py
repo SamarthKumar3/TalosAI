@@ -88,9 +88,16 @@ async def _run_shell(*, no_history: bool, project_root: Path) -> int:
         ui_opener=lambda: phase4.open_ui_with_context(command_context, ensure_core=True),
         knowledge_importer=lambda path: phase6.add_with_context(command_context, path),
         skill_updater=update_skill,
-        repository_handler=lambda arguments: _shell_repository(
-            command_context, arguments, reader, selected_repository
+        repository_handler=(
+            (
+                lambda arguments, conversation_id: _shell_repository(
+                    command_context, arguments, reader, selected_repository, conversation_id
+                )
+            )
+            if runtime_mode == "service"
+            else None
         ),
+        artifacts_directory=project_root / ".talos" / "artifacts",
     )
     await shell.run()
     return 0
@@ -101,6 +108,7 @@ async def _shell_repository(
     arguments: tuple[str, ...],
     reader: PromptToolkitReader,
     selected_repository: dict[str, str],
+    conversation_id: str,
 ) -> str:
     if not arguments or arguments[0] == "status":
         result = await phase7.status_with_context(
@@ -110,7 +118,23 @@ async def _shell_repository(
         )
         return str(result)
     if arguments[0] in {"add", "index", "reindex"}:
-        return await _shell_index_repository(context, arguments, reader, selected_repository)
+        indexed = await _shell_index_repository(context, arguments, reader, selected_repository)
+        if selected_repository.get("ready") == "true":
+            await phase7.select_with_context(context, conversation_id, selected_repository["path"])
+        return indexed
+    if arguments[0] in {"ask", "hld"}:
+        query = (
+            " ".join(arguments[1:])
+            if arguments[0] == "ask"
+            else "Create a repository HLD as a Mermaid flowchart with cited explanations."
+        )
+        response = await phase7.ask_with_context(context, query, path=selected_repository["path"])
+        if arguments[0] == "hld":
+            from talos.repository_diagrams import write_hld
+
+            target = write_hld(response, context.root / ".talos" / "artifacts")
+            return f"{response}\nMermaid file: {target}"
+        return response
     if arguments[0] == "search" and len(arguments) > 1:
         return str(
             await phase7.search_with_context(
@@ -121,7 +145,10 @@ async def _shell_repository(
         return str(await phase7.cancel_with_context(context, arguments[1]))
     if arguments[0] == "remove":
         return await _shell_remove_repository(context, reader, selected_repository["path"])
-    return "Use /repo [status [JOB_ID]|index [PATH]|search QUERY|cancel JOB_ID|remove]"
+    return (
+        "Use /repo [status [JOB_ID]|index [PATH_OR_URL]|ask QUESTION|"
+        "hld|search QUERY|cancel JOB_ID|remove]"
+    )
 
 
 async def _shell_index_repository(
@@ -136,6 +163,9 @@ async def _shell_index_repository(
     path = arguments[1] if len(arguments) > 1 else selected_repository["path"]
     result = await phase7.index_with_context(context, path, yes=True)
     selected_repository["path"] = path
+    selected_repository["ready"] = "false"
+    await phase7.wait_for_index(context, str(result["job_id"]))
+    selected_repository["ready"] = "true"
     return str(result)
 
 
@@ -227,6 +257,8 @@ def _dispatch_talos(options: argparse.Namespace) -> int:
             _repository_value(options),
             yes=getattr(options, "yes", False),
             path=getattr(options, "path", "."),
+            private=getattr(options, "private", False),
+            output=getattr(options, "output", None),
         )
     return 2
 
@@ -267,7 +299,7 @@ def _repository_value(options: argparse.Namespace) -> str | None:
         return _optional_text(options.path)
     if options.repo_command in {"status", "cancel"}:
         return _optional_text(options.job_id)
-    if options.repo_command == "search":
+    if options.repo_command in {"search", "ask"}:
         return _optional_text(options.query)
     return None
 

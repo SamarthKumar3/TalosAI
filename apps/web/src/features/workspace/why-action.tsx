@@ -120,7 +120,7 @@ export function useWhyAction(conversationId: string | null, eligible: boolean, c
 
 export type WhyAction = ReturnType<typeof useWhyAction>;
 
-export function WhyMenu({ action, disabled }: Readonly<{ action: WhyAction; disabled: boolean }>) {
+export function WhyMenu({ action, disabled, onRepositoryIntel }: Readonly<{ action: WhyAction; disabled: boolean; onRepositoryIntel?: () => void }>) {
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
   const option = useRef<HTMLButtonElement>(null);
@@ -144,6 +144,7 @@ export function WhyMenu({ action, disabled }: Readonly<{ action: WhyAction; disa
         <strong>Why</strong><span>Explain and debug a previous Talos reply</span>
       </button>
       {!action.eligible && <p>There are no previous Talos responses to inspect.</p>}
+      {onRepositoryIntel && <button type="button" onClick={() => { setOpen(false); onRepositoryIntel(); }}><strong>Repository Intel</strong><span>Ask about a GitHub repository or create its HLD</span></button>}
     </div>}
   </div>;
 }
