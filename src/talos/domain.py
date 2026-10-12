@@ -56,6 +56,7 @@ class Conversation:
     id: str = field(default_factory=lambda: str(uuid4()))
     messages: list[Message] = field(default_factory=list)
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    repository: dict[str, str] | None = None
 
 
 @dataclass(frozen=True, slots=True)

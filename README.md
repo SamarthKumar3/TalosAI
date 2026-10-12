@@ -171,6 +171,33 @@ Python tools require explicit trust and a matching file hash. They run in a
 restricted Docker container. SDK callables registered directly by your app
 run with your app's permissions.
 
+## Ask about a repository
+
+In the browser, select **+ → Repository Intel**, paste a GitHub repository URL,
+and send your question. Talos remembers that repository for the chat. Ask for an
+HLD to get a Mermaid diagram and download it as a `.mmd` file. Source chips show
+which files were used; hover or focus a chip to see its full path.
+
+For a private repository, open **Private repository?** and enter a fine-grained
+GitHub token with **Contents: read-only** access to that repository. The token is
+used once for the import and is not saved. Your chosen model receives source excerpts.
+
+In the terminal, first index a local checkout or GitHub URL:
+
+```sh
+talos repo index https://github.com/owner/repository --yes
+talos repo status JOB_ID
+talos repo ask "Where does a request enter the app?" --path https://github.com/owner/repository
+talos repo hld --path https://github.com/owner/repository
+```
+
+Wait for the indexing job to finish before asking. Add `--private` to the index
+command to enter a GitHub token in a hidden prompt. In `hi talos`, use
+`/repo index PATH_OR_URL`, then ask questions normally or run `/repo hld`.
+Diagrams and cited explanations are saved under `.talos/artifacts/`. Open the
+`.mmd` file in a Mermaid viewer such as [Mermaid Live](https://mermaid.live).
+Check what you share before opening a private repository diagram in an online service.
+
 ## Your data
 
 Talos runs locally. Your chosen AI provider receives the messages, selected file

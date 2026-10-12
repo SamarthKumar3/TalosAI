@@ -142,6 +142,7 @@ class RepositoryIndexService:
         *,
         repository_id: str | None = None,
         history: Sequence[str] = (),
+        overview: bool = False,
     ) -> list[RepositoryHit]:
         if not query.strip() or len(query) > self.rag.max_query_characters:
             raise ValueError("Repository query is empty or too long")
@@ -172,6 +173,45 @@ class RepositoryIndexService:
             top_k=self.rag.top_k,
             threshold=self.rag.similarity_threshold,
         )
+        if overview and rows:
+            # Architecture questions need a cross-section of entry points, not six adjacent chunks.
+            from talos.retrieval import RankedItem
+
+            selected = list(ranked)
+            paths = {rows[item.index][0].path for item in selected}
+            candidates = sorted(
+                enumerate(rows),
+                key=lambda item: (
+                    not any(
+                        word in item[1][0].path.lower()
+                        for word in (
+                            "readme",
+                            "architecture",
+                            "package.json",
+                            "pyproject",
+                            "docker",
+                            "main.",
+                            "app.",
+                            "index.",
+                            "routes",
+                            "schema",
+                            "model",
+                        )
+                    ),
+                    item[1][0].ordinal,
+                    item[1][0].path.count("/"),
+                    item[1][0].path,
+                ),
+            )
+            for index, row in candidates:
+                if row[0].path not in paths:
+                    selected.append(
+                        RankedItem(index=index, score=0.0, dense_score=0.0, sparse_score=0.0)
+                    )
+                    paths.add(row[0].path)
+                if len(selected) >= max(self.rag.top_k, 16):
+                    break
+            ranked = selected
         return [
             RepositoryHit(
                 marker=f"R{index}",

@@ -615,6 +615,7 @@ class TalosAgent:
         idempotency_key: str | None = None,
         correlation_id: str | None = None,
         attachments: Sequence[MessageAttachment] = (),
+        repository_mode: bool | None = None,
     ) -> RunResult:
         completed: RuntimeEvent | None = None
         async for event in self.stream(
@@ -623,6 +624,7 @@ class TalosAgent:
             idempotency_key=idempotency_key,
             correlation_id=correlation_id,
             attachments=attachments,
+            repository_mode=repository_mode,
         ):
             if event.type is EventType.RESPONSE_COMPLETED:
                 completed = event
@@ -650,6 +652,7 @@ class TalosAgent:
         idempotency_key: str | None = None,
         correlation_id: str | None = None,
         attachments: Sequence[MessageAttachment] = (),
+        repository_mode: bool | None = None,
     ) -> AsyncIterator[RuntimeEvent]:
         _validate_run_request(prompt, conversation_id, idempotency_key)
         _validate_message_attachments(attachments, conversation_id)
@@ -688,6 +691,7 @@ class TalosAgent:
             memory=memory,
             repository=repository,
             attachments=attachments,
+            repository_mode=repository_mode,
         )
         task = asyncio.create_task(execution.execute())
         try:
@@ -817,6 +821,7 @@ class _AgentExecution:
         memory: MemoryService,
         repository: RepositoryIndexService | None,
         attachments: Sequence[MessageAttachment],
+        repository_mode: bool | None,
     ) -> None:
         self.agent = agent
         self.conversation = conversation
@@ -830,6 +835,7 @@ class _AgentExecution:
         self.memory = memory
         self.repository = repository
         self.attachments = tuple(attachments)
+        self.repository_mode = repository_mode
         self.queue: asyncio.Queue[RuntimeEvent | object] = asyncio.Queue(maxsize=64)
         self.sequence = 0
         self.raised: BaseException | None = None
@@ -920,11 +926,28 @@ class _AgentExecution:
         user_message = Message(MessageRole.USER, self.prompt, attachments=self.attachments)
         history = await self._load_memory_context()
         await self.agent._store.append(self.conversation.id, user_message)
+        if self.repository_mode is True and self.conversation.repository is None:
+            await self._repository_notice("Please provide a repository URL.")
+            return
         async with asyncio.timeout(self.config.budgets.max_execution_seconds):
             hits, repository_hits = await self._retrieve(history)
+            if (
+                self.conversation.repository
+                and self.repository_mode is not False
+                and not repository_hits
+            ):
+                await self._repository_notice(
+                    "I could not find relevant source excerpts in the selected repository. "
+                    "Try a specific file, symbol, or question, or reindex the repository."
+                )
+                return
             result = await self._call_model(history, user_message, hits, repository_hits)
         self._validate_usage(result.usage)
         await self._complete_model_response(result)
+
+    async def _repository_notice(self, response: str) -> None:
+        await self.emit(EventType.RESPONSE_DELTA, {"text": response})
+        await self._complete_model_response(GraphResult(response, Usage(), ()))
 
     def _started_payload(self) -> dict[str, Any]:
         return {
@@ -1045,10 +1068,17 @@ class _AgentExecution:
         ]
 
     async def _repository_hits(self, history: Sequence[str], enabled: bool) -> list[RepositoryHit]:
-        if self.repository is None or not enabled:
+        if self.repository is None or not enabled or self.repository_mode is False:
             return []
+        from talos.repository_diagrams import is_repository_overview_request
+
         hits = await self.repository.search(
-            self.prompt[: self.config.rag.max_query_characters], history=history
+            self.prompt[: self.config.rag.max_query_characters],
+            history=history,
+            repository_id=self.conversation.repository["id"]
+            if self.conversation.repository
+            else None,
+            overview=is_repository_overview_request(self.prompt),
         )
         return [
             hit
@@ -1107,6 +1137,10 @@ class _AgentExecution:
         hits: Sequence[KnowledgeHit],
         repository_hits: Sequence[RepositoryHit],
     ) -> GraphResult:
+        if self.conversation.repository and self.repository_mode is not False:
+            from talos.repository_diagrams import REPOSITORY_INSTRUCTIONS
+
+            history = (Message(MessageRole.SYSTEM, REPOSITORY_INSTRUCTIONS), *history)
         started_at = datetime.now(UTC)
         started_clock = time.perf_counter()
         sources = [

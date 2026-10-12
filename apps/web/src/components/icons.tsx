@@ -2,6 +2,14 @@ import type { SVGProps } from "react";
 
 type IconProps = Readonly<SVGProps<SVGSVGElement>>;
 
+export function SparklesIcon(props: IconProps) {
+  return <Icon {...props}><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6L12 3ZM20 2v4M18 4h4" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></Icon>;
+}
+
+export function ReactFileIcon(props: IconProps) {
+  return <Icon {...props}><circle cx="12" cy="12" r="1.7" fill="currentColor" /><ellipse cx="12" cy="12" rx="10" ry="4" stroke="currentColor" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" stroke="currentColor" /><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" stroke="currentColor" /></Icon>;
+}
+
 export function ToolIcon(props: IconProps) {
   return <Icon {...props}><path d="m14 6 4 4 3-3a6 6 0 0 1-8 7L6 21l-3-3 7-7a6 6 0 0 1 7-8l-3 3Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /></Icon>;
 }

@@ -43,6 +43,7 @@ class ConversationRow(Base):
         nullable=False,
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    repository: Mapped[dict[str, str] | None] = mapped_column(JSON, nullable=True)
 
 
 class MessageRow(Base):

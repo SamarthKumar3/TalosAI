@@ -19,6 +19,7 @@ class ChatRequest(StrictModel):
     input: str = Field(min_length=1)
     conversation_id: str | None = None
     attachments: list[MessageAttachmentResponse] = Field(default_factory=list, max_length=10)
+    repository_mode: bool | None = None
 
 
 class ContextEstimateRequest(StrictModel):
@@ -72,6 +73,16 @@ class MessageResponse(StrictModel):
 class ConversationResponse(ConversationCreateResponse):
     title: str = "New conversation"
     messages: list[MessageResponse]
+    repository: dict[str, str] | None = None
+
+
+class RepositoryUrlRequest(StrictModel):
+    url: str = Field(min_length=1, max_length=300)
+    token: str | None = Field(default=None, min_length=1, max_length=255, repr=False)
+
+
+class RepositorySelectionRequest(StrictModel):
+    repository_id: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
 
 
 class AgentResponse(StrictModel):

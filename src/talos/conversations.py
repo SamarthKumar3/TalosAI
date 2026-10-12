@@ -9,6 +9,9 @@ from talos.errors import ConversationNotFoundError
 
 
 class ConversationStore(Protocol):
+    async def select_repository(
+        self, conversation_id: str, repository: dict[str, str] | None
+    ) -> None: ...
     async def create(self, configuration: ConfigurationSnapshot) -> Conversation: ...
 
     async def get(self, conversation_id: str) -> Conversation: ...
@@ -48,6 +51,13 @@ class InMemoryConversationStore:
             if conversation is None:
                 raise ConversationNotFoundError(f"Conversation {conversation_id!r} was not found")
             conversation.messages.append(message)
+
+    async def select_repository(
+        self, conversation_id: str, repository: dict[str, str] | None
+    ) -> None:
+        conversation = await self.get(conversation_id)
+        async with self._lock:
+            conversation.repository = dict(repository) if repository else None
 
     async def list(self, *, limit: int = 50) -> list[Conversation]:
         async with self._lock:

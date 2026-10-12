@@ -86,6 +86,11 @@ def _talos_parser() -> argparse.ArgumentParser:
         entry = repo_commands.add_parser(action)
         entry.add_argument("path", nargs="?", default=".")
         entry.add_argument("--yes", action="store_true")
+        entry.add_argument(
+            "--private",
+            action="store_true",
+            help="Prompt privately for a GitHub token with Contents read access",
+        )
     repo_status = repo_commands.add_parser("status")
     repo_status.add_argument("job_id", nargs="?")
     repo_status.add_argument("--path", default=".")
@@ -97,4 +102,12 @@ def _talos_parser() -> argparse.ArgumentParser:
     repo_search = repo_commands.add_parser("search")
     repo_search.add_argument("query")
     repo_search.add_argument("--path", default=".")
+    repo_ask = repo_commands.add_parser("ask", help="Ask a question about an indexed repository")
+    repo_ask.add_argument("query")
+    repo_ask.add_argument("--path", default=".", help="Local path or GitHub repository URL")
+    repo_hld = repo_commands.add_parser(
+        "hld", help="Save a cited repository HLD as a Mermaid .mmd file"
+    )
+    repo_hld.add_argument("--path", default=".", help="Local path or GitHub repository URL")
+    repo_hld.add_argument("--output", help="Directory for the Mermaid file and cited explanation")
     return parser

@@ -21,6 +21,9 @@ const ALLOWED_ROUTES = [
   /^conversations\/[A-Za-z0-9-]+\/why(?:\/history)?$/,
   /^conversations$/,
   /^conversations\/[A-Za-z0-9-]+$/,
+  /^conversations\/[A-Za-z0-9-]+\/repository$/,
+  /^repositories\/url$/,
+  /^repositories\/jobs\/[A-Za-z0-9-]+(?:\/cancel)?$/,
   /^context\/estimate$/,
   /^chat\/stream$/,
   /^knowledge$/,
@@ -112,7 +115,7 @@ async function forwardRequest(
       ...(request.headers.get("Last-Event-ID") ? { "Last-Event-ID": request.headers.get("Last-Event-ID") as string } : {}),
       ...(request.headers.get("Idempotency-Key") ? { "Idempotency-Key": request.headers.get("Idempotency-Key") as string } : {}),
     },
-    signal: AbortSignal.any([request.signal, AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)]),
+    signal: AbortSignal.any([request.signal, AbortSignal.timeout(path === "repositories/url" ? 100_000 : UPSTREAM_TIMEOUT_MS)]),
   });
 
   const headers = new Headers();

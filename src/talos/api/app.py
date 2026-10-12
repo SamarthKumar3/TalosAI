@@ -47,6 +47,7 @@ from talos.api.contracts import (
 )
 from talos.api.extension_routes import register_extension_routes
 from talos.api.model_routes import register_model_routes
+from talos.api.repository_routes import register_repository_url_routes
 from talos.conversations import ConversationStore
 from talos.domain import MessageAttachment
 from talos.errors import ConfigurationError, ConversationNotFoundError, TalosError
@@ -226,12 +227,12 @@ def create_app(
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, exc: RequestValidationError) -> Any:
-        if request.url.path == "/api/v1/models/credentials":
+        if request.url.path in {"/api/v1/models/credentials", "/api/v1/repositories/url"}:
             return JSONResponse(
                 status_code=422,
                 content={
                     "code": "validation_error",
-                    "message": "Check the API key form fields",
+                    "message": "Check the credential form fields",
                     "correlation_id": request.state.correlation_id,
                 },
             )
@@ -260,6 +261,15 @@ def create_app(
     )
     register_extension_routes(app, runtime.extensions, authorize)
     register_model_routes(app, runtime.models, authorize)
+    register_repository_url_routes(
+        app,
+        agent,
+        conversations,
+        repository_jobs,
+        repository_settings,
+        knowledge_notifier,
+        authorize,
+    )
     _register_tool_routes(
         app, agent, tool_approvals, skill_reloader, authorize, ensure_guardrails_loaded
     )
@@ -458,6 +468,7 @@ def _register_core_routes(
             idempotency_key=idempotency_key,
             correlation_id=request.state.correlation_id,
             attachments=attachments,
+            repository_mode=body.repository_mode,
         )
         return ChatResponse(
             run_id=result.run_id,
@@ -493,6 +504,7 @@ def _register_core_routes(
             idempotency_key=idempotency_key,
             correlation_id=request.state.correlation_id,
             attachments=attachments,
+            repository_mode=body.repository_mode,
         )
         first_event = await anext(event_stream)
 
@@ -1243,6 +1255,7 @@ def _conversation_response(
         if usage not in entries:
             entries.append(usage)
     return ConversationResponse(
+        repository=conversation.repository,
         title=title,
         id=conversation.id,
         configuration_version=conversation.configuration.version,

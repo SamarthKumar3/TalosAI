@@ -33,6 +33,7 @@ import { apiJson } from "@/lib/talos-client/api-json";
 import { FeatureSettingsPanel, GuardrailAdder } from "@/features/settings/settings-controls";
 import { useWhyAction, WhyChip, WhyMenu, WhyReportCard, type WhyAction, type WhyReport } from "@/features/workspace/why-action";
 import { AssistantMessage } from "@/features/workspace/assistant-message";
+import { RepositoryIntelChip, useRepositoryIntel, type RepositoryIntelAction } from "@/features/workspace/repository-intel";
 import { ContextWindowDetails } from "@/features/workspace/context-window-details";
 import { conversationTitle, knowledgeContent, wait } from "@/features/workspace/workspace-utils";
 import { ThemeToggle } from "@/features/theme/theme-toggle";
@@ -190,6 +191,7 @@ function voiceStatus(speech: ReturnType<typeof useSpeechInput>): string {
 }
 
 type ComposerProps = Readonly<{
+  repositoryIntel: RepositoryIntelAction;
   why: WhyAction;
   contextEstimate: ContextEstimate | null;
   allowedExtensions: string[];
@@ -222,7 +224,7 @@ function Composer({
   allowedExtensions, attachment, cancelling, contextEstimate, error, fileRef, onAttachmentOpen,
   onAttachmentRemove, onCancel, onDismissError, onDocumentSelect, onPromptChange,
   onPromptKeyDown, onSubmit, prompt, promptRef, runId, speech, streaming, uploading,
-  uploadStatus, why, models, selectedModel, modelChanging, onModelChange,
+  uploadStatus, why, models, selectedModel, modelChanging, onModelChange, repositoryIntel,
 }: ComposerProps) {
   const unavailable = streaming || uploading || why.busy || modelChanging;
   const inputDisabled = unavailable || why.active;
@@ -239,11 +241,12 @@ function Composer({
         <label className="sr-only" htmlFor="talos-prompt">Message Talos</label>
         <input accept={allowedExtensions.join(",")} className="sr-only" disabled={attachmentsDisabled} onChange={onDocumentSelect} ref={fileRef} tabIndex={-1} type="file" />
         {why.active && <WhyChip action={why} />}
+        {!why.active && repositoryIntel.active && <RepositoryIntelChip action={repositoryIntel} />}
         {!why.active && attachment && <AttachmentChip attachment={attachment} onOpen={onAttachmentOpen} onRemove={onAttachmentRemove} />}
-        <div className="composer-input-row"><textarea disabled={inputDisabled} onPaste={(event) => { if (inputDisabled) event.preventDefault(); }} id="talos-prompt" onChange={(event) => onPromptChange(event.target.value)} onKeyDown={onPromptKeyDown} placeholder="Message Talos..." ref={promptRef} rows={1} value={why.active ? "" : prompt} /></div>
+        <div className="composer-input-row"><textarea disabled={inputDisabled} onPaste={(event) => { if (inputDisabled) event.preventDefault(); }} id="talos-prompt" onChange={(event) => onPromptChange(event.target.value)} onKeyDown={onPromptKeyDown} placeholder={repositoryIntel.active ? (repositoryIntel.selected ? "Ask about this repository…" : "Add a repository link to analyse") : "Message Talos..."} ref={promptRef} rows={1} value={why.active ? "" : prompt} /></div>
         <div className="composer-toolbar">
           <div className="composer-tools">
-            <WhyMenu action={why} disabled={unavailable} />
+            <WhyMenu action={why} disabled={unavailable} onRepositoryIntel={() => { why.remove(); repositoryIntel.activate(); }} />
             <button aria-label="Attach a document for RAG" className="attachment-button" disabled={attachmentsDisabled} onClick={() => fileRef.current?.click()} title={attachmentTitle} type="button"><PaperclipIcon /></button>
             <button aria-label={speech.listening ? "Stop voice input" : "Start voice input"} aria-pressed={speech.listening} className={`voice-button ${speech.listening ? "is-listening" : ""}`} disabled={!speech.supported || inputDisabled} onClick={speech.toggle} title={speech.supported ? "Browser speech recognition may send audio to your browser provider" : "Voice input is unavailable in this browser"} type="button"><MicrophoneIcon /></button>
             <ChatModelPicker catalog={models} disabled={inputDisabled || !models || !!attachment} onChange={onModelChange} value={selectedModel} />
@@ -397,6 +400,9 @@ export function ChatWorkspace() {
     promptRef.current?.focus();
   });
   const why = useWhyAction(active?.id ?? null, messages.some((m) => m.role === "assistant" && !m.pending && !m.failed), speech.cancel, whyInputLocked);
+  const repositoryIntel = useRepositoryIntel(active?.id ?? null, active?.repository, (id, repository) => {
+    setActive((current) => current?.id === id ? { ...current, repository } : current);
+  });
   const { allowedExtensions, maxSourceBytes } = ragUploadLimits(config);
 
 
@@ -605,7 +611,7 @@ export function ChatWorkspace() {
   }
 
   async function handleNewConversation() {
-    if (why.busy) return;
+    if (why.busy || streaming) return;
     try {
       await newConversation();
     } catch (error_) {
@@ -797,7 +803,9 @@ export function ChatWorkspace() {
     event?.preventDefault();
     if (why.active) { await why.send(); return; }
     if (why.busy) return;
-    const input = prompt.trim();
+    const originalInput = prompt.trim();
+    let input = originalInput;
+    const repositoryMode = repositoryIntel.active;
     const attachmentToSend = attachment;
     if (!input || streaming || uploading || modelChanging) return;
 
@@ -812,6 +820,7 @@ export function ChatWorkspace() {
     let assistantId: string | null = null;
     try {
       conversation ??= await newConversation();
+      if (repositoryMode) input = await repositoryIntel.prepare(input, conversation.id);
       if (attachmentToSend && !attachmentToSend.indexed) {
         attachmentSourceId = await indexAttachment(attachmentToSend.file, conversation.id);
         setAttachment((current) => current ? { ...current, indexed: true, sourceId: attachmentSourceId } : current);
@@ -830,7 +839,7 @@ export function ChatWorkspace() {
           "Content-Type": "application/json",
           "Idempotency-Key": crypto.randomUUID(),
         },
-        body: JSON.stringify({ input, conversation_id: conversation.id, attachments: messageAttachments }),
+        body: JSON.stringify({ input, conversation_id: conversation.id, attachments: messageAttachments, repository_mode: repositoryMode }),
       });
       const stream = await consumeChatStream(
         response,
@@ -847,7 +856,7 @@ export function ChatWorkspace() {
     } catch (error_) {
       const message = error_ instanceof Error ? error_.message : "The request could not be completed.";
       setError(message);
-      setPrompt(input);
+      setPrompt(originalInput);
       setMessages((current) =>
         current
           .filter((item) => item.id !== assistantId)
@@ -1025,7 +1034,7 @@ export function ChatWorkspace() {
           <ConversationContent whyReports={why.reports} active={active} agent={agent} endRef={endRef} loading={loading} messages={messages} onAttachmentOpen={(sourceId) => void openMessageAttachment(sourceId)} onSuggestion={setPrompt} streaming={streaming} usage={usage} />
         </section>
 
-        <Composer models={models} selectedModel={active?.model_profile_id || selectedModel || models?.default_model_id || ""} modelChanging={modelChanging} onModelChange={(id) => void changeModel(id)} why={why} allowedExtensions={allowedExtensions} attachment={attachment} cancelling={cancelling} contextEstimate={contextEstimate} error={error} fileRef={fileRef} onAttachmentOpen={() => attachment && setPreviewAttachment(attachment)} onAttachmentRemove={() => setAttachment(null)} onCancel={() => void cancelRun()} onDismissError={() => setError(null)} onDocumentSelect={(event) => void selectDocument(event)} onPromptChange={(value) => { if (!whyInputLocked.current) setPrompt(value); }} onPromptKeyDown={handlePromptKeyDown} onSubmit={(event) => void sendMessage(event)} prompt={prompt} promptRef={promptRef} runId={runId} speech={speech} streaming={streaming} uploading={uploading} uploadStatus={uploadStatus} />
+        <Composer repositoryIntel={repositoryIntel} models={models} selectedModel={active?.model_profile_id || selectedModel || models?.default_model_id || ""} modelChanging={modelChanging} onModelChange={(id) => void changeModel(id)} why={why} allowedExtensions={allowedExtensions} attachment={attachment} cancelling={cancelling} contextEstimate={contextEstimate} error={error} fileRef={fileRef} onAttachmentOpen={() => attachment && setPreviewAttachment(attachment)} onAttachmentRemove={() => setAttachment(null)} onCancel={() => void cancelRun()} onDismissError={() => setError(null)} onDocumentSelect={(event) => void selectDocument(event)} onPromptChange={(value) => { if (!whyInputLocked.current) setPrompt(value); }} onPromptKeyDown={handlePromptKeyDown} onSubmit={(event) => void sendMessage(event)} prompt={prompt} promptRef={promptRef} runId={runId} speech={speech} streaming={streaming} uploading={uploading} uploadStatus={uploadStatus} />
       </main>
 
       <main

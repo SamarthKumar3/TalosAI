@@ -16,6 +16,7 @@ export type Message = {
 };
 
 export type Conversation = {
+  repository?: { id: string; name: string } | null;
   title?: string;
   model_profile_id?: string | null;
   model_id?: string | null;
